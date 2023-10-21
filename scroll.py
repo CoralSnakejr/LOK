@@ -1,40 +1,44 @@
-import time
+import os
 
-def create_rolling_scroll(text):
-    scroll_width = 30  # Adjust the scroll width as desired
+def clear_console():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def create_rolling_scroll(scroll_width, text, new_text):
     border_char = '|'
 
     # Create the text section
     text_lines = text.split('\n')
+    new_text_lines = new_text.split('\n')
 
-    # Determine the length of the longest line
-    max_line_length = max(len(line) for line in text_lines)
+    # Create top and bottom borders with the specified scroll width
+    top_border = f'{border_char * (scroll_width + 4)}'
+    bottom_border = f'{border_char * (scroll_width + 4)}'
 
-    # Create top and bottom borders with proper length
-    top_border = f'{border_char * (max_line_length + 4)}'
-    bottom_border = f'{border_char * (max_line_length + 4)}'
+    clear_console()
+    print(top_border)
+    for line in text_lines:
+        lines = [line[i:i+scroll_width] for i in range(0, len(line), scroll_width)]
+        for line in lines:
+            line = line.ljust(scroll_width)
+            print(f'{border_char} {line} {border_char}')
+    print(top_border)
 
-    # Assemble the initial scroll with top and bottom borders
-    medieval_scroll = f'''
-{top_border}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{border_char}{' ' * max_line_length} {border_char}
-{bottom_border}
-'''
+    input("Press Enter to switch the text...")
 
-    num_roll_lines = min(len(text_lines), 1)  # Adjust the number as desired
-    rolled_text = '\n'.join([f'{border_char} {line.ljust(max_line_length)} {border_char}' for line in text_lines[:]])
-    rolled_scroll = medieval_scroll + rolled_text + medieval_scroll
-    print(rolled_scroll)
-    time.sleep(0.5)  # Adjust the delay as desired
+    clear_console()
+    print(top_border)
+    for line in new_text_lines:
+        lines = [line[i:i+scroll_width] for i in range(0, len(line), scroll_width)]
+        for line in lines:
+            line = line.ljust(scroll_width)
+            print(f'{border_char} {line} {border_char}')
+    print(bottom_border)
+
+    input("Press Enter to continue...")
 
 if __name__ == "__main__":
+    scroll_width = 30  # Adjust the scroll width as desired
+
     scroll_text = """
 This is a smaller rolling medieval-style scroll
 created using Python.
@@ -45,4 +49,9 @@ to make the scroll roll even smaller.
 Have fun!
     """
 
-    create_rolling_scroll(scroll_text)
+    new_text = """
+Here's some new text with a fading effect.
+This text will replace the previous text after you press Enter.
+"""
+
+    create_rolling_scroll(scroll_width, scroll_text, new_text)
